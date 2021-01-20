@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Pumpen</h2>
+  <form action="{% url 'select' pump.id %}" method="put">
+    {% csrf_token %}
+    {% for pump in pumpe_list %}
+      <option value="{{ pump.id }}">{{ pump.Pumpentyp }}</option>
+    {% endfor %}
+    <input type="submit" value="Select">
+  </form>
+
+  {% if pumpe_list %}
+  <table>
+    {% for pump in pumpe_list_2 %}
+    <tr>
+      <th>{{pump.Pumpentyp}}</th>
+      <th>{{pump.Drehzahl}}</th>
+      <th>{{pump.Qn}}</th>
+      <th>{{pump.Pn}}</th>
+      <th>{{pump.Lrd}}</th>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+    <p>No pumps selected</p>
+  {% endif %}
+    
+{% endblock %}

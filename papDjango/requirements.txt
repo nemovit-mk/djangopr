@@ -1,0 +1,5 @@
+django-mssql-backend
+django-filter
+django-crispy-forms 
+django-tables2
+ODBC Driver 13 for SQL Server

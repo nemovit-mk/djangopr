@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Pumpen</h2>
+  {% if pumpe_list %}
+  <table>
+    {% for pump in pumpe_list %}
+    <tr>
+      <th>{{pump.Pumpentyp}}</th>
+      <th>{{pump.Drehzahl}}</th>
+      <th>{{pump.Qn}}</th>
+      <th>{{pump.Pn}}</th>
+      <th>{{pump.Lrd}}</th>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+    <p>No pumps selected</p>
+  {% endif %}
+    {% csrf_token %}
+    <select class="" name="pumpen">
+      {% for daten in object_list %}
+       <option value="{{ daten.id }}">{{ daten.Pumpentyp }}</option>
+       {% endfor %}
+    </select>
+    <button type="submit">Save</button>
+    <!-- <a href="{% url 'charts' %}">Nevermind</a> -->
+{% endblock %}

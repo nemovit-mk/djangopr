@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Person Form</h2>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <select multiple name="flowers" size="4">
+        {% for pump in form %}
+        <option value="{{pump.id}}" >{{pump.Pumpentyp}}</option>
+        {% endfor %}
+      </select>
+    <button type="submit">Save</button>
+  </form>
+{% endblock %}
