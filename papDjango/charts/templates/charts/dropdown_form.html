@@ -1,18 +1,48 @@
-{% block table-wrapper %}
+{% extends 'base.html' %}
+<!-- {% block table-wrapper %} -->
+
+
+{% block content %}
+
+
+<script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js" charset="utf-8"></script> 
+
 <div class="table-container">
-    {% block table %}
 
-<form method="post" id="personForm" data-cities-url="{% url 'ajax_load_cities' %}" novalidate>
-    {% csrf_token %}
-        <table>
-            {{ form.as_table }}
-        </table>
-    <button type="submit">Save</button>
+  <form method="post" id="selectForm" data-cities-url="{% url 'charts:ajax_load_pumps' %}" novalidate></form>
+{% csrf_token %}
+  <select class="" name="pumpen">
+    {% for daten in object_list %}
+     <option value="{{ daten.id }}">{{ daten.Pumpentyp }}</option>
+     {% endfor %}
+  </select>
+  <button id="addButton" type="submit">Add</button>  
 </form>
-    
-    {% block table %}
-
+  <div id="graph">
+    {% block graph %}{% endblock %}
 </div>
+    
+</div>
+
+
+<script>
+  $("#addButton").click(function () {
+    var url = $("#selectForm").attr("data-cities-url");  // get the url of the `load_cities` view
+    var pumpId = $(this).val();  // get the selected country ID from the HTML input
+
+    $.ajax({                       // initialize an AJAX request
+      url: "/ajax/load-pumps",                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+      data: {
+        'id': pumpId       // add the country id to the GET parameters
+      },
+      success: function (data) {   // `data` is the return of the `load_cities` view function
+        $("#graph").html(data);  // replace the contents of the city input with the data that came from the server
+      }
+    });
+
+  });
+</script>
 <!-- <script>
     $("#id_country").change(function () {
       var url = $("#personForm").attr("data-cities-url");  // get the url of the `load_cities` view
@@ -30,4 +60,6 @@
 
     });
   </script> -->
-{% endblock table-wrapper %}
+  
+{% endblock %}
+<!-- {% endblock table-wrapper %} -->

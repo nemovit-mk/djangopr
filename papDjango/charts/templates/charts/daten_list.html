@@ -2,7 +2,7 @@
 
 {% block content %}
   <h2>Pumpen</h2>
-  <form action="{% url 'select' pump.id %}" method="put">
+  <form action="{% url 'charts:select' pump.id %}" method="put">
     {% csrf_token %}
     {% for pump in pumpe_list %}
       <option value="{{ pump.id }}">{{ pump.Pumpentyp }}</option>

@@ -30,10 +30,15 @@ class PumpenTableView(SingleTableView):
         context['table'] = table
         return context
 
-class PumpsView(CreateView):
-    model = Daten
-    form_class = PumpsForm
-    success_url = reverse_lazy('')
+class PumpsView(ListView):
+    model = Daten    
+    template_name = 'charts/dropdown_form.html'
+    # form_class = PumpsForm
+
+def load_pumps(request):
+    id = request.GET.get('pumpen')
+    pumps = Daten.objects.filter(id=id)
+    return render(request, 'charts/graph.html', {'selectedPumps': pumps})
 
 # class Pumpen(ListView):
 #     model = Daten

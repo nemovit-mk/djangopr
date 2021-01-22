@@ -17,11 +17,14 @@ from django.urls import path
 from django.conf.urls import url
 from . import views
 
+
+app_name = 'charts'
 urlpatterns = [
-    path('', views.PumpenTableView.as_view(), name='charts'),    
+    path('', views.PumpenTableView.as_view(), name='index'),    
     # path('/<int:pk>', views.PumpeDetailView.as_view(), name='pump-detail'),
     # path('<int:pumps_id>/select/', views.choose_pumps, name='select'),
     path('graph/', views.PumpsView.as_view(), name='select'),
+    path('ajax/load-pumps/', views.load_pumps, name='ajax_load_pumps'),
     # path('api/call_points/', views.apiCallPoints, name='apiCallPoints'),
     # path('add/', views.PumpCreateView.as_view(), name='get_pump'),
 ]
