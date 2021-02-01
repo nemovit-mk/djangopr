@@ -22,11 +22,45 @@ class Daten(models.Model):
 	B = models.FloatField()
 	M = models.FloatField()
 	V = models.FloatField()
+	H1 = models.FloatField()
+	Q1 = models.FloatField()
+	H2 = models.FloatField()
+	Q2 = models.FloatField()
+	H3 = models.FloatField()
+	Q3 = models.FloatField()
+	H4 = models.FloatField()
+	Q4 = models.FloatField()
+	H5 = models.FloatField()
+	Q5 = models.FloatField()
+	H6 = models.FloatField()
+	Q6 = models.FloatField()
+	H7 = models.FloatField()
+	Q7 = models.FloatField()
 	class Meta:
 		db_table = 'Daten'
 		managed = False
 	def __str__(self):
 		return self.Pumpentyp
+	def as_json(self):
+		return dict(
+			id = self.id,
+			typ = self.Pumpentyp,
+			n = self.Drehzahl,
+			h1 = self.H1,
+			q1 = self.Q1,
+			h2 = self.H2,
+			q2 = self.Q2,
+			h3 = self.H3,
+			q3 = self.Q3,
+			h4 = self.H4,
+			q4 = self.Q4,
+			h5 = self.H5,
+			q5 = self.Q5,
+			h6 = self.H6,
+			q6 = self.Q6,
+			h7 = self.H7,
+			q7 = self.Q7
+		)
 
 class PumpsForm(forms.ModelForm):
     class Meta:

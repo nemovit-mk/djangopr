@@ -3,6 +3,7 @@
 <html>
     {# Make modifiable head elements #}
     <head>
+        {% load static %}
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
@@ -13,7 +14,7 @@
         integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
         crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
  
         <!-- {% load static %} -->
         <!-- <link href="{{ STATIC_URL }}static/bootstrap/css/bootstrap.min.css" -->
@@ -48,6 +49,17 @@
     </head>
     
 <body>
+    <ul class="sidebar-nav">
+
+       
+    
+       {% if user.is_authenticated %}
+         <li>User: {{ user.get_username }}</li>
+         <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
+       {% else %}
+         <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
+       {% endif %} 
+      </ul>
     
     <div class="container">
         <div class="row justify-content-center">
@@ -70,7 +82,7 @@
             </div>
         </div>
     </div>
-
+    {% block js %}{% endblock %}
 <!--     
     <script src="{% static 'jquery/js/jquery-3.5.1.js' %}"></script> -->
     <!-- <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script> -->    
