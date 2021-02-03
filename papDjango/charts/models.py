@@ -7,6 +7,7 @@ import django_filters
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Daten(models.Model):
@@ -61,6 +62,18 @@ class Daten(models.Model):
 			h7 = self.H7,
 			q7 = self.Q7
 		)
+
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    id = models.AutoField(primary_key=True)
+    class Meta:
+        db_table = 'Cart'
+
+class Item(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    pump = models.ForeignKey(Daten, on_delete=models.CASCADE)
+    class Meta:
+        db_table = 'Item'
 
 class PumpsForm(forms.ModelForm):
     class Meta:

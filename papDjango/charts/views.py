@@ -5,17 +5,26 @@
 from django.http import Http404
 from django.views.generic import ListView, DetailView, CreateView, TemplateView
 from django.urls import reverse_lazy
-from .models import Daten, ChartsTable, PumpsForm
+from .models import Cart, Item, Daten, ChartsTable, PumpsForm
 from .models import ChartsFilterFormHelper, ChartsFilter
 from django_tables2 import RequestConfig, SingleTableView
 from django.core import serializers
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib.auth.backends import BaseBackend
 
 from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse
 
-
+class cartView(LoginRequiredMixin, BaseBackend, SingleTableView):
+    model = Cart
+    context_object_name = 'pumpe_list'
+    template_name = 'charts/cart.html' 
+    def get_queryset(self, **kwargs):
+        cart = Cart.objects.get_or_create(User, pk=self.request.user.pk)
+        items = Item.objects.filter(cart = cart)
+        return items
 
 class PumpenTableView(LoginRequiredMixin, SingleTableView):
     model = Daten
