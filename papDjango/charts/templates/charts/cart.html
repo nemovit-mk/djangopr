@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<h2>Pumpen</h2>
+
+<a href="{% url 'charts:index'%}">Add To Cart</a>
+{% if pumpe_list %}
+
+<div class="table-container">
+<table class="table table-striped">  
+  <thead>
+    <tr>
+        <th>Pumpentyp</th>
+        <th>Drehzahl</th>
+        <th>Qn</th>
+        <th>Pn</th>
+        <th>Lrd</th>
+        <th>Remove</th>
+    </tr>
+</thead>
+<tbody>    
+  {% for item in pumpe_list %}
+    <tr>
+        <td>{{item.pump.Pumpentyp}}</td>
+        <td>{{item.pump.Drehzahl}}</td>
+        <td>{{item.pump.Qn}}</td>
+        <td>{{item.pump.Pn}}</td>
+        <td>{{item.pump.Lrd}}</td>
+        <td><a href="{% url 'charts:item_remove' item.id %}">Del</a></td>
+      </tr>
+      {% endfor %}           
+</tbody>
+
+</table>
+</div>
+<a href="{% url 'charts:cart_clear' %}">Clear Cart</a>
+{% else %}
+  <p>No pumps selected</p>
+{% endif %}
+{% endblock %}
+
+{% load static %}

@@ -15,16 +15,82 @@ from django.contrib.auth.models import User
 from django.contrib.auth.backends import BaseBackend
 
 from django.shortcuts import get_object_or_404, render
+from django.shortcuts import redirect
 from django.http import JsonResponse
+
+from django.http import HttpResponse
+
+# from rest_framework import viewsets
+# from rest_framework import permissions
+# from .serializers import UserSerializer
+# from rest_framework.response import Response
+# from rest_framework import generics
 
 class cartView(LoginRequiredMixin, BaseBackend, SingleTableView):
     model = Cart
     context_object_name = 'pumpe_list'
-    template_name = 'charts/cart.html' 
+    template_name = 'charts/js.html' 
     def get_queryset(self, **kwargs):
-        cart = Cart.objects.get_or_create(User, pk=self.request.user.pk)
-        items = Item.objects.filter(cart = cart)
-        return items
+        cart, created = Cart.objects.get_or_create(user = self.request.user)
+        cart.refresh_from_db()
+        try:
+            items = Item.objects.select_related('pump').filter(cart = cart)
+            return items#Daten.objects.select_related('id__').filter(cart = cart)
+        except Item.DoesNotExist:
+            return None
+
+class activeCart(object):           
+    def __init__(self, request):
+        self.cart, created = Cart.objects.get_or_create(user = request.user)
+        self.cart.refresh_from_db()
+    def add(self, pump_id):
+        pump = Daten.objects.filter(id=pump_id).first()
+        item = Item.objects.create(cart=self.cart, pump=pump)
+    def remove(self, item_id):
+        item = Item.objects.get(cart=self.cart, id=item_id)
+        if item:
+            item.delete()
+    def clear(self):
+        self.cart.item_set.all().delete()
+    def get(self):        
+        items = Item.objects.select_related('pump').filter(cart=self.cart)
+        if items:
+                return [item.pump for item in items]
+
+@login_required(login_url="/accounts/login")
+def get_dots(request):    
+    cart = activeCart(request)    
+    items = cart.get()
+    data = serializers.serialize("json", items)
+    return HttpResponse(data, content_type="application/json")
+
+@login_required(login_url="/accounts/login")
+def cart_clear(request):    
+    cart = activeCart(request)
+    cart.clear()
+    return redirect('charts:cart')
+            
+@login_required(login_url="/accounts/login")
+def item_add(request, pk):
+    cart = activeCart(request)
+    cart.add(pump_id=pk)
+    return redirect('charts:cart')
+
+@login_required(login_url="/accounts/login")
+def item_remove(request, pk):
+    cart = activeCart(request)
+    cart.remove(item_id=pk)
+    return redirect('charts:cart')
+    # path('cart/add/<int:pk>/', views.item_add, name='item_add'),
+    # path('cart/remove/<int:pk>/', views.item_remove, name='item_remove'),
+    # path('cart/clear/', views.cart_clear, name='cart_clear'),
+
+
+# @login_required(login_url="/accounts/login")
+# def get_pumps_from_cart(request):    
+#     cart = activeCart(request)
+#     cart.get()
+#     return redirect('charts:cart')
 
 class PumpenTableView(LoginRequiredMixin, SingleTableView):
     model = Daten
@@ -85,6 +151,18 @@ def load_pumps(request):
     id = request.GET.get('pumpen')
     pumps = Daten.objects.filter(id=id)
     return render(request, 'charts/graph.html', {'selectedPumps': pumps})
+
+# ViewSets define the view behavior.
+# class UserViewSet(generics.ListAPIView): #viewsets.ModelViewSet):
+#     # queryset = activeCart(context['request'])
+#     serializer_class = UserSerializer    
+#     permission_classes = [permissions.IsAuthenticated]
+    
+#     def get_queryset(self):
+#         cart = activeCart(self.request)
+#         items = cart.get()
+#         return items 
+
 
 # class Pumpen(ListView):
 #     model = Daten

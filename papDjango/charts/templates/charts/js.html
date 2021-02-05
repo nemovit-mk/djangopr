@@ -1,46 +1,16 @@
-{% extends 'base.html' %}
-
-
-{% block content %}
-<script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
-<script src="https://d3js.org/d3-scale-chromatic.v1.min.js" charset="utf-8"></script> 
-
-<form method="get" id="selectForm" action="{% url 'charts:jstest-id' 1 %}">
-{% csrf_token %}
-  <select name="pumpen">
-    {% for daten in object_list %}
-     <option value="{{ daten.id }}">{{ daten.Pumpentyp }}</option>
-     {% endfor %}
-  </select>
-  <button id="addButton" type="submit">Add</button>  
-</form>
-
-{% endblock %}
+{% extends 'charts/cart.html' %}
 
 {% load static %}
 
 {% block js %}
+<script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js" charset="utf-8"></script> 
+
 <link rel="stylesheet" type="text/css" href="{% static 'charts/css/d3Chart.css' %}">
-<!-- <div>
-{% if pumps %}
-{% for pump in pumps %}
-      <li>
-        <p>{{ pump }}</p>
-      </li>
-    {% endfor %}
-{% endif %}
-</div> -->
-
-{% if pumps %}
-<!-- <div>{{ pumps }}</div> -->
-
-<div>{{ pumps|json_script:"forChart" }}</div>
 
 <div id="container" class="chart-wrapper" width=600 height=480 align="center">
 </div>
 
 <script type="text/javascript" src="{% static 'charts/js/d3Chart.js' %}"></script>
-
-{% endif %}
 
 {% endblock %}

@@ -1,6 +1,7 @@
 from django.db import models
 import django_tables2 as table
 from django.utils.safestring import mark_safe
+from django_tables2.utils import A  # alias for Accessor
 
 
 import django_filters
@@ -8,6 +9,7 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column
 from django.contrib.auth.models import User
+from django.conf import settings
 
 # Create your models here.
 class Daten(models.Model):
@@ -64,7 +66,7 @@ class Daten(models.Model):
 		)
 
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User,  on_delete=models.CASCADE)
     id = models.AutoField(primary_key=True)
     class Meta:
         db_table = 'Cart'
@@ -86,10 +88,14 @@ class ChartsTable(table.Table):
     # def render_name(self, value, record):
     #     url = record.get_absolute_url()
     #     return mark_safe('<a href="%s">%s</a>' % (url, record))
+    add = table.LinkColumn('charts:item_add', args=[A('pk')], orderable=False, empty_values=())
     class Meta:
         model = Daten		
         template_name = "django_tables2/bootstrap.html"
         fields = ('Pumpentyp', 'Drehzahl', 'Qn', )
+    def render_add(self):
+        return 'Add'
+
 
 class ChartsFilter(django_filters.FilterSet):
     # attribute1 = django_filters.NumberFilter(lookup_type='exact')
@@ -101,6 +107,7 @@ class ChartsFilter(django_filters.FilterSet):
 class ChartsFilterFormHelper(FormHelper):
 	model = Daten
 	form_method = 'GET'
+	form_class = 'form-group'
 	layout = Layout(
         'Pumpentyp',
         Submit('submit', 'Apply Filter'),
