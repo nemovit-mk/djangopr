@@ -28,14 +28,17 @@ app_name = 'charts'
 urlpatterns = [    
     # path('', include(router.urls)),
     path('', views.PumpenTableView.as_view(), name='index'),    
+    path('npsh/', views.PumpenTableViewNPSH.as_view(), name='npsh'),  
     # path('/<int:pk>', views.PumpeDetailView.as_view(), name='pump-detail'),
     # path('<int:pumps_id>/select/', views.choose_pumps, name='select'),    
     path('cart/', views.cartView.as_view(), name='cart'),
     path('cart/add/<int:pk>/', views.item_add, name='item_add'),
+    path('cart/add_npsh/<int:pk>/', views.npsh_add, name='npsh_add'),
     path('cart/remove/<int:pk>/', views.item_remove, name='item_remove'),
     path('cart/clear/', views.cart_clear, name='cart_clear'),
     
     path('pumps/', views.get_dots, name='get_dots'),
+    path('npshList/', views.get_npsh, name='get_npsh'),
     
     # path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 

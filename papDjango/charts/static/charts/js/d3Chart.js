@@ -2,7 +2,10 @@
 // const mydata = JSON.parse(data);
 // console.log (mydata[0].fields.H1);
 
+// hq
 // [{"model": "charts.daten", "pk": 5, "fields": {"Br": 2.0, "Pumpentyp": "GP   -200M/  4x440", "Qn": 600.0, "Drehzahl": 2980.0, "Lrd": 427.0, "NWDS": 50.0, "NWSS": 100.0, "Pn": 16.0, "B": 0.0, "M": 0.0, "V": 0.0, "H1": 1108.4093908977954, "Q1": 0.0, "H2": 1103.4615359830075, "Q2": 141.18, "H3": 1077.7130176600456, "Q3": 317.65, "H4": 987.6412656143883, "Q4": 494.12, "H5": 962.2829325176394, "Q5": 529.41, "H6": 934.7088858982681, "Q6": 564.71, "H7": 767.3681793889864, "Q7": 741.15}}, {"model": "charts.daten", "pk": 5, "fields": {"Br": 2.0, "Pumpentyp": "GP   -200M/  4x440", "Qn": 600.0, "Drehzahl": 2980.0, "Lrd": 427.0, "NWDS": 50.0, "NWSS": 100.0, "Pn": 16.0, "B": 0.0, "M": 0.0, "V": 0.0, "H1": 1108.4093908977954, "Q1": 0.0, "H2": 1103.4615359830075, "Q2": 141.18, "H3": 1077.7130176600456, "Q3": 317.65, "H4": 987.6412656143883, "Q4": 494.12, "H5": 962.2829325176394, "Q5": 529.41, "H6": 934.7088858982681, "Q6": 564.71, "H7": 767.3681793889864, "Q7": 741.15}}, {"model": "charts.daten", "pk": 4, "fields": {"Br": 2.0, "Pumpentyp": "GP   -200M/  3x440", "Qn": 600.0, "Drehzahl": 2980.0, "Lrd": 427.0, "NWDS": 50.0, "NWSS": 100.0, "Pn": 16.0, "B": 0.0, "M": 0.0, "V": 0.0, "H1": 831.3070431733466, "Q1": 0.0, "H2": 827.5961519872554, "Q2": 141.18, "H3": 808.284763245034, "Q3": 317.65, "H4": 740.7309492107912, "Q4": 494.12, "H5": 721.7121993882295, "Q5": 529.41, "H6": 701.031664423701, "Q6": 564.71, "H7": 575.5261345417398, "Q7": 741.15}}, {"model": "charts.daten", "pk": 1, "fields": {"Br": 2.0, "Pumpentyp": "GP_D -200L/ 11x440", "Qn": 480.0, "Drehzahl": 2980.0, "Lrd": 412.0, "NWDS": 50.0, "NWSS": 100.0, "Pn": 16.0, "B": 0.0, "M": 0.0, "V": 0.0, "H1": 2977.606516734797, "Q1": 0.0, "H2": 2973.7719556257175, "Q2": 96.0, "H3": 2905.777760075604, "Q3": 256.0, "H4": 2611.903591309814, "Q4": 416.0, "H5": 2532.1789234602384, "Q5": 448.0, "H6": 2445.3791454217435, "Q6": 480.0, "H7": 1892.6161200437662, "Q7": 640.0}}]
+// npsh
+// [{"model": "charts.npsh50", "pk": 1, "fields": {"Pumpentyp": "KRC  - 65 /125", "Drehzahl": 1450.0, "H1": 1.13, "Q1": 15.0, "H2": 1.11, "Q2": 22.5, "H3": 1.1, "Q3": 30.0, "H4": 1.13, "Q4": 37.5, "H5": 1.18, "Q5": 45.0, "H6": 1.3, "Q6": 52.5, "H7": 1.45, "Q7": 60.0}}, {"model": "charts.npsh50", "pk": 8, "fields": {"Pumpentyp": "KRC  - 65 /315", "Drehzahl": 2975.0, "H1": 2.29, "Q1": 30.0, "H2": 3.07, "Q2": 49.0, "H3": 3.65, "Q3": 68.0, "H4": 4.25, "Q4": 87.0, "H5": 5.22, "Q5": 106.0, "H6": 6.7, "Q6": 125.0, "H7": 9.21, "Q7": 144.0}}]
 
 // var chartDaten = {
 //     design: {},
@@ -198,7 +201,7 @@ function makeApolloChart(dataset) { //, showList) {
         curve.line = d3.line()
             .x(function(d) { return chartObj.xScale(chartObj.xFunct(d)); })
             .y(function(d) { return chartObj.yScale(chartObj.yFunct(d)); })
-            .curve(d3.curveCardinal);
+            .curve(d3.curveLinear); //(d3.curveCardinal);
         curve.dotX = function(d) { return chartObj.xScale(chartObj.xFunct(d)); };
         curve.dotY = function(d) { return chartObj.yScale(chartObj.yFunct(d)); };
     });
@@ -308,7 +311,7 @@ function makeApolloChart(dataset) { //, showList) {
             curve.dots = chartObj.svg//.append("g")
                 //d3.selectAll(".dot")
                 .selectAll(".dot")
-                .data(curve)
+                .data(curve, function(d){return d;})
                 .enter()
                 .append("circle")
                 .attr("class", "dot")

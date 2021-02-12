@@ -26,7 +26,7 @@ SECRET_KEY = 'w3_cu59!w=z6uw*vdx($hxsx81^ddps7_gn1e)04m%ff*(iz&t'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['10.17.0.143']
 
 
 # Application definition

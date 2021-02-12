@@ -5,6 +5,8 @@
 <h2>Pumpen</h2>
 
 <a href="{% url 'charts:index'%}">Add To Cart</a>
+
+<a href="{% url 'charts:npsh'%}">Add NPSH To Cart</a>
 {% if pumpe_list %}
 
 <div class="table-container">
@@ -20,7 +22,8 @@
     </tr>
 </thead>
 <tbody>    
-  {% for item in pumpe_list %}
+  {% for item in pumpe_list %}  
+  {% if item.pump %}
     <tr>
         <td>{{item.pump.Pumpentyp}}</td>
         <td>{{item.pump.Drehzahl}}</td>
@@ -28,16 +31,45 @@
         <td>{{item.pump.Pn}}</td>
         <td>{{item.pump.Lrd}}</td>
         <td><a href="{% url 'charts:item_remove' item.id %}">Del</a></td>
-      </tr>
+      </tr>  
+      {% endif %} 
       {% endfor %}           
 </tbody>
 
 </table>
 </div>
+
+
+<div class="table-container">
+  <table class="table table-striped">  
+    <thead>
+      <tr>
+          <th>Pumpentyp</th>
+          <th>Drehzahl</th>
+          <th>Remove</th>
+      </tr>
+  </thead>
+  <tbody>    
+    {% for item in pumpe_list %}
+    {% if item.npsh %}
+      <tr>
+          <td>{{item.npsh.Pumpentyp}}</td>
+          <td>{{item.npsh.Drehzahl}}</td>
+          <td><a href="{% url 'charts:item_remove' item.id %}">Del</a></td>
+        </tr>      
+    {% endif %}     
+    {% endfor %}    
+  </tbody>
+  
+  </table>
+  </div>
+
 <a href="{% url 'charts:cart_clear' %}">Clear Cart</a>
 {% else %}
   <p>No pumps selected</p>
 {% endif %}
+
+
 {% endblock %}
 
 {% load static %}

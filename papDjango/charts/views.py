@@ -5,8 +5,9 @@
 from django.http import Http404
 from django.views.generic import ListView, DetailView, CreateView, TemplateView
 from django.urls import reverse_lazy
-from .models import Cart, Item, Daten, ChartsTable, PumpsForm
+from .models import Cart, Item, Daten, ChartsTable, PumpsForm, Npsh50
 from .models import ChartsFilterFormHelper, ChartsFilter
+from .models import ChartsFilterFormHelperNPSH, ChartsFilterNPSH, ChartsTableNPSH
 from django_tables2 import RequestConfig, SingleTableView
 from django.core import serializers
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -34,7 +35,7 @@ class cartView(LoginRequiredMixin, BaseBackend, SingleTableView):
         cart, created = Cart.objects.get_or_create(user = self.request.user)
         cart.refresh_from_db()
         try:
-            items = Item.objects.select_related('pump').filter(cart = cart)
+            items = Item.objects.prefetch_related('pump').filter(cart = cart).prefetch_related('npsh').filter(cart = cart)
             return items#Daten.objects.select_related('id__').filter(cart = cart)
         except Item.DoesNotExist:
             return None
@@ -46,6 +47,9 @@ class activeCart(object):
     def add(self, pump_id):
         pump = Daten.objects.filter(id=pump_id).first()
         item = Item.objects.create(cart=self.cart, pump=pump)
+    def add_npsh(self, npsh_id):
+        pump = Npsh50.objects.filter(id=npsh_id).first()
+        item = Item.objects.create(cart=self.cart, npsh=pump)
     def remove(self, item_id):
         item = Item.objects.get(cart=self.cart, id=item_id)
         if item:
@@ -55,12 +59,23 @@ class activeCart(object):
     def get(self):        
         items = Item.objects.select_related('pump').filter(cart=self.cart)
         if items:
-                return [item.pump for item in items]
+                return [item.pump for item in items]                
+    def get_npsh(self):        
+        items = Item.objects.select_related('npsh').filter(cart=self.cart)
+        if items:
+                return [item.npsh for item in items]
 
 @login_required(login_url="/accounts/login")
 def get_dots(request):    
     cart = activeCart(request)    
     items = cart.get()
+    data = serializers.serialize("json", items)
+    return HttpResponse(data, content_type="application/json")
+
+@login_required(login_url="/accounts/login")
+def get_npsh(request):    
+    cart = activeCart(request)    
+    items = cart.get_npsh()
     data = serializers.serialize("json", items)
     return HttpResponse(data, content_type="application/json")
 
@@ -74,6 +89,12 @@ def cart_clear(request):
 def item_add(request, pk):
     cart = activeCart(request)
     cart.add(pump_id=pk)
+    return redirect('charts:cart')
+
+@login_required(login_url="/accounts/login")
+def npsh_add(request, pk):
+    cart = activeCart(request)
+    cart.add_npsh(npsh_id=pk)
     return redirect('charts:cart')
 
 @login_required(login_url="/accounts/login")
@@ -105,6 +126,24 @@ class PumpenTableView(LoginRequiredMixin, SingleTableView):
         filter = ChartsFilter(self.request.GET, queryset=self.get_queryset(**kwargs))
         filter.form.helper = ChartsFilterFormHelper()
         table = ChartsTable(filter.qs)
+        RequestConfig(self.request).configure(table)
+        context['filter'] = filter
+        context['table'] = table
+        return context
+
+class PumpenTableViewNPSH(LoginRequiredMixin, SingleTableView):
+    model = Npsh50
+    table_class = ChartsTableNPSH
+    template_name = 'charts/charts_table.html'
+
+    def get_queryset(self, **kwargs):
+        return Npsh50.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(PumpenTableViewNPSH, self).get_context_data(**kwargs)
+        filter = ChartsFilterNPSH(self.request.GET, queryset=self.get_queryset(**kwargs))
+        filter.form.helper = ChartsFilterFormHelperNPSH()
+        table = ChartsTableNPSH(filter.qs)
         RequestConfig(self.request).configure(table)
         context['filter'] = filter
         context['table'] = table
