@@ -1,4 +1,5 @@
 // Chart maker on D3
+
 // const data = JSON.parse(document.getElementById('forChart').textContent);
 // const mydata = JSON.parse(data);
 // console.log (mydata[0].fields.H1);
