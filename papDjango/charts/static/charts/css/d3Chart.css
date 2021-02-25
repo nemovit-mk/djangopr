@@ -1,11 +1,12 @@
 .chart-wrapper {
-    max-width: 950px;
-    min-width: 304px;
-    margin: 0 auto;
+    /* max-width: 950px; */
+    /* min-width: 300px;
+    min-height: 300px;
+    margin: 0 auto; */
     background-color: #ffffff;
 }
 
-.chart-wrapper .inner-wrapper {
+/* .chart-wrapper .inner-wrapper {
     position: relative;
     padding-bottom: 50%;
     width: 100%;
@@ -19,7 +20,7 @@
 .chart-wrapper .inner-box {
     width: 100%;
     height: 100%;
-}
+} */
 
 .chart-wrapper text {
   font-family: sans-serif;

@@ -42,7 +42,7 @@ Chart.size = {};
 Chart.axisX.name = "Flow";
 Chart.axisY.name = "Head";
 
-Chart.size.margin = {top: 15, right: 60, bottom: 30, left: 50}; 
+Chart.size.margin = {top: 15, right: 30, bottom: 30, left: 30}; 
 Chart.size.proportion = 3/4;
 
 Chart.color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -50,6 +50,19 @@ Chart.color = d3.scaleOrdinal(d3.schemeCategory10);
 Chart.curves = function(link) {
     d3.json(link).then(function(json) {
         console.log(json);
+        Chart.HQ = {};
+        json.forEach(function(curve){
+            Chart.HQ.push(String(curve.fields.Pumpentyp));
+            Chart.HQ.push([{ x: curve.fields.Q1, y: curve.fields.H1}, 
+                { x: curve.fields.Q2, y: curve.fields.H2},
+                { x: curve.fields.Q3, y: curve.fields.H3},
+                { x: curve.fields.Q4, y: curve.fields.H4},
+                { x: curve.fields.Q5, y: curve.fields.H5},
+                { x: curve.fields.Q6, y: curve.fields.H6},
+                { x: curve.fields.Q7, y: curve.fields.H7}
+            ]);
+            });        
+        console.log(Chart.HQ);
     }).catch(function(error){console.log('error: ' + error); return null;});
 };
 
@@ -58,13 +71,22 @@ Chart.init = function () {
 };
 
 Chart.render = function () {
-    //   
-    Chart.size.width = parseInt(chartObj.mainDiv.style("width"), 10) - (Chart.size.margin.left + Chart.size.margin.right);
-    Chart.size.height = parseInt(Chart.size.mainDiv.style("height"), 10) - (Chart.size.margin.top + Chart.size.margin.bottom);
+    //
+    console.log(Chart.mainDiv.style("width"));
+    console.log(Chart.mainDiv.style("padding-left"));
+    Chart.size.width = parseInt(Chart.mainDiv.style("width"), 10) - parseInt(Chart.mainDiv.style("padding-left"), 10) 
+                        - parseInt(Chart.mainDiv.style("padding-right"), 10) - (Chart.size.margin.left + Chart.size.margin.right);
+    Chart.size.height = parseInt(Chart.size.width*Chart.size.proportion, 10);
+    console.log(Chart.size.width);
+    // Chart.size.height = parseInt(Chart.mainDiv.style("height"), 10) - (Chart.size.margin.top + Chart.size.margin.bottom);
     if (Chart.size.width < (650 - Chart.size.margin.left - Chart.size.margin.right)) {
         Chart.size.width = (650 - Chart.size.margin.left - Chart.size.margin.right);
         Chart.size.height = 480 - Chart.size.margin.top - Chart.size.margin.bottom;
-        }
+        };
+
+    if (Chart.svg) {Chart.mainDiv
+                 .selectAll(".chart-area")
+                 .remove();};
     //Create SVG element
     Chart.svg = Chart.mainDiv
         .append("svg")
@@ -73,64 +95,64 @@ Chart.render = function () {
         .attr("height", Chart.size.height + (Chart.size.margin.top + Chart.size.margin.bottom))
         .append("g")
         .attr("transform", "translate(" + Chart.size.margin.left + "," + Chart.size.margin.top + ")");
-    //Todo remake line drawing
-    // Draw Lines
-    var y = 0;
-    chartObj.curvesList.forEach(function (curve) {
-        curve.line = chartObj.svg
-            .append("path").datum(curve)
-            .attr("class", "line")
-            .attr("d", curve.line)
-            .style("stroke", color(y))
-            .attr("data-series", y)
-            .on("mouseover", function () {
-                focus.style("display", null);
-            }).on("mouseout", function () {
-                focus.transition().delay(700).style("display", "none");
-            }).on("mousemove", mousemove);
-        curve.dots = chartObj.svg//.append("g")
-            //d3.selectAll(".dot")
-            .selectAll(".dot")
-            .data(curve, function(d){return d;})
-            .enter()
-            .append("circle")
-            .attr("class", "dot")
-            .attr("r", 4)
-            .attr("cx", curve.dotX) //function(d){return chartObj.xScale(chartObj.xFunct(d))})
-            .attr("cy", curve.dotY) //function(d){return chartObj.yScale(yObjs[String(y)].yFunct(d))})
-            //.attr("fill", "none")
-            .attr("stroke", color(y));
-        y++;
-    });
-        // Draw Axis
-    Chart.svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + Chart.size.height + ")")
-        .call(chartObj.xAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("x", Chart.size.width / 2).attr("y", 30)
-        .style("text-anchor", "middle")
-        .text(chartObj.xAxisLable);
-    Chart.svg.append("g")
-        .attr("class", "y axis")
-        .call(chartObj.yAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("transform", "rotate(-90)")
-        .attr("y", -42)
-        .attr("x", -Chart.size.height / 2)
-        .attr("dy", ".71em")
-        .style("text-anchor", "middle")
-        .text(chartObj.yAxisLable);
-    // Draw Grid
-    Chart.svg.append("g")
-        .attr("class", "x axis-grid")
-        .attr('transform', 'translate(0,' + Chart.size.height + ')')
-        .call(chartObj.xGrid);
-    Chart.svg.append("g")
-        .attr("class", "y axis-grid")
-        .call(chartObj.yGrid);
+    // //Todo remake line drawing
+    // // Draw Lines
+    // var y = 0;
+    // chartObj.curvesList.forEach(function (curve) {
+    //     curve.line = chartObj.svg
+    //         .append("path").datum(curve)
+    //         .attr("class", "line")
+    //         .attr("d", curve.line)
+    //         .style("stroke", color(y))
+    //         .attr("data-series", y)
+    //         .on("mouseover", function () {
+    //             focus.style("display", null);
+    //         }).on("mouseout", function () {
+    //             focus.transition().delay(700).style("display", "none");
+    //         }).on("mousemove", mousemove);
+    //     curve.dots = chartObj.svg//.append("g")
+    //         //d3.selectAll(".dot")
+    //         .selectAll(".dot")
+    //         .data(curve, function(d){return d;})
+    //         .enter()
+    //         .append("circle")
+    //         .attr("class", "dot")
+    //         .attr("r", 4)
+    //         .attr("cx", curve.dotX) //function(d){return chartObj.xScale(chartObj.xFunct(d))})
+    //         .attr("cy", curve.dotY) //function(d){return chartObj.yScale(yObjs[String(y)].yFunct(d))})
+    //         //.attr("fill", "none")
+    //         .attr("stroke", color(y));
+    //     y++;
+    // });
+    //     // Draw Axis
+    // Chart.svg.append("g")
+    //     .attr("class", "x axis")
+    //     .attr("transform", "translate(0," + Chart.size.height + ")")
+    //     .call(chartObj.xAxis)
+    //     .append("text")
+    //     .attr("class", "label")
+    //     .attr("x", Chart.size.width / 2).attr("y", 30)
+    //     .style("text-anchor", "middle")
+    //     .text(chartObj.xAxisLable);
+    // Chart.svg.append("g")
+    //     .attr("class", "y axis")
+    //     .call(chartObj.yAxis)
+    //     .append("text")
+    //     .attr("class", "label")
+    //     .attr("transform", "rotate(-90)")
+    //     .attr("y", -42)
+    //     .attr("x", -Chart.size.height / 2)
+    //     .attr("dy", ".71em")
+    //     .style("text-anchor", "middle")
+    //     .text(chartObj.yAxisLable);
+    // // Draw Grid
+    // Chart.svg.append("g")
+    //     .attr("class", "x axis-grid")
+    //     .attr('transform', 'translate(0,' + Chart.size.height + ')')
+    //     .call(chartObj.xGrid);
+    // Chart.svg.append("g")
+    //     .attr("class", "y axis-grid")
+    //     .call(chartObj.yGrid);
     // //Draw tooltips
     // var focus = Chart.svg
     //     .append("g")
@@ -231,10 +253,10 @@ Chart.bind = function (selector) {
     Chart.mainDiv = d3.select(selector);
     //chartObj.chartDiv = d3.select(chartSelector);
     d3.select(window)
-        .on('resize.' + selector, Chart.resize);
-    Chart.resize();
+        .on('resize.' + selector, Chart.render);
+    Chart.render();
     return Chart;
 };
-
-
+  
+Chart.bind("#container");
 Chart.curves("/pumps/");
